@@ -4,105 +4,102 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Juego de Memoria</title>
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f5f5f5;
+        }
+        .board {
+            display: grid;
+            grid-template-columns: repeat(4, 100px);
+            grid-gap: 10px;
+            margin-top: 30px;
+        }
+        .card {
+            width: 100px;
+            height: 100px;
+            background-color: #4CAF50;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            color: transparent;
+            cursor: pointer;
+        }
+        .card.flipped {
+            background-color: #fff;
+            color: black;
+        }
+    </style>
 </head>
 <body>
     <div class="board" id="board"></div>
 
-    <script src="script.js"></script>
+    <script>
+        const board = document.getElementById("board");
+        const cards = [];
+        const cardValues = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+        let flippedCards = [];
+        let matchedCards = 0;
+
+        // Mezclar las cartas de manera aleatoria
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]]; // Swap
+            }
+        }
+
+        // Crear las cartas
+        function createBoard() {
+            shuffle(cardValues);
+            cardValues.forEach(value => {
+                const card = document.createElement('div');
+                card.classList.add('card');
+                card.dataset.value = value;
+                card.addEventListener('click', flipCard);
+                cards.push(card);
+                board.appendChild(card);
+            });
+        }
+
+        // Voltear carta
+        function flipCard() {
+            if (flippedCards.length === 2 || this.classList.contains('flipped')) return;
+
+            this.classList.add('flipped');
+            this.textContent = this.dataset.value;
+            flippedCards.push(this);
+
+            // Verificar si las dos cartas volteadas coinciden
+            if (flippedCards.length === 2) {
+                setTimeout(() => {
+                    if (flippedCards[0].dataset.value === flippedCards[1].dataset.value) {
+                        matchedCards++;
+                        if (matchedCards === cardValues.length / 2) {
+                            alert("¡Ganaste!");
+                        }
+                    } else {
+                        flippedCards[0].classList.remove('flipped');
+                        flippedCards[1].classList.remove('flipped');
+                        flippedCards[0].textContent = '';
+                        flippedCards[1].textContent = '';
+                    }
+                    flippedCards = [];
+                }, 1000);
+            }
+        }
+
+        // Inicializar el tablero
+        createBoard();
+    </script>
 </body>
 </html>
 
-
-body {
-    font-family: Arial, sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
-    background-color: #f5f5f5;
-}
-
-.board {
-    display: grid;
-    grid-template-columns: repeat(4, 100px);
-    grid-gap: 10px;
-    margin-top: 30px;
-}
-
-.card {
-    width: 100px;
-    height: 100px;
-    background-color: #4CAF50;
-    border-radius: 10px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 24px;
-    color: transparent;
-    cursor: pointer;
-}
-
-.card.flipped {
-    background-color: #fff;
-    color: black;
-}
-
-
-const board = document.getElementById("board");
-const cards = [];
-const cardValues = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
-let flippedCards = [];
-let matchedCards = 0;
-
-// Mezclar las cartas de manera aleatoria
-function shuffle(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]]; // Swap
-    }
-}
-
-// Crear las cartas
-function createBoard() {
-    shuffle(cardValues);
-    cardValues.forEach(value => {
-        const card = document.createElement('div');
-        card.classList.add('card');
-        card.dataset.value = value;
-        card.addEventListener('click', flipCard);
-        cards.push(card);
-        board.appendChild(card);
-    });
-}
-
-// Voltear carta
-function flipCard() {
-    if (flippedCards.length === 2 || this.classList.contains('flipped')) return;
-
-    this.classList.add('flipped');
-    this.textContent = this.dataset.value;
-    flippedCards.push(this);
-
-    // Verificar si las dos cartas volteadas coinciden
-    if (flippedCards.length === 2) {
-        setTimeout(() => {
-            if (flippedCards[0].dataset.value === flippedCards[1].dataset.value) {
-                matchedCards++;
-                if (matchedCards === cardValues.length / 2) {
-                    alert("¡Ganaste!");
-                }
-            } else {
-                flippedCards[0].classList.remove('flipped');
-                flippedCards[1].classList.remove('flipped');
-                flippedCards[0].textContent = '';
-                flippedCards[1].textContent = '';
-            }
-            flippedCards = [];
-        }, 1000);
-    }
-}
-
-// Inicializar el tablero
 createBoard();
